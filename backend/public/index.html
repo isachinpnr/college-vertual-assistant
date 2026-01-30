@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>College Virtual Assistant - Your Digital Campus Guide</title>
+    <meta name="description" content="Professional college virtual assistant platform for students and administration" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/components.css" />
+    <link rel="stylesheet" href="/css/animations.css" />
+  </head>
+  <body>
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">☰</button>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="container">
+      <div class="sidebar" id="sidebar">
+        <div class="header">
+          <h1>🎓 College Assistant</h1>
+        </div>
+        <div class="nav">
+          <div class="nav-item active" data-section="chat">
+            <span style="font-size: 1.2rem;">💬</span>
+            <span>Chat Assistant</span>
+          </div>
+          <div class="nav-item" data-section="files">
+            <span style="font-size: 1.2rem;">📁</span>
+            <span>Files & Documents</span>
+          </div>
+          <div class="nav-item" data-section="faqs">
+            <span style="font-size: 1.2rem;">❓</span>
+            <span>FAQs</span>
+          </div>
+          <div class="nav-item" data-section="analytics" id="analyticsNav" style="display: none;">
+            <span style="font-size: 1.2rem;">📊</span>
+            <span>Analytics</span>
+          </div>
+          <div class="nav-item" data-section="admin" id="adminNav" style="display: none;">
+            <span style="font-size: 1.2rem;">⚙️</span>
+            <span>Admin Panel</span>
+          </div>
+        </div>
+      </div>
+      <div class="main-content">
+        <div class="header">
+          <h2 id="sectionTitle">Chat Assistant</h2>
+          <div class="user-info">
+            <div id="loginSection">
+              <form class="login-form" id="loginForm">
+                <input type="email" id="loginEmail" placeholder="Email" value="student@college.com" required />
+                <input type="password" id="loginPassword" placeholder="Password" value="student123" required />
+                <button type="submit">Login</button>
+              </form>
+            </div>
+            <div id="userSection" style="display: none;">
+              <span id="userName"></span>
+              <span class="role-badge" id="userRole"></span>
+              <button id="logoutBtn">Logout</button>
+            </div>
+          </div>
+        </div>
+        <div class="content-area">
+          <!-- Chat Section -->
+          <div id="chat" class="section active"></div>
+
+          <!-- Files Section -->
+          <div id="files" class="section"></div>
+
+          <!-- FAQs Section -->
+          <div id="faqs" class="section"></div>
+
+          <!-- Analytics Section -->
+          <div id="analytics" class="section"></div>
+
+          <!-- Admin Panel -->
+          <div id="admin" class="section"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Load modules as ES6 modules -->
+    <script type="module">
+      // Import all modules
+      import { api } from './utils/api.js';
+      import { initSocket, socketEvents } from './utils/socket.js';
+      import { auth } from './js/auth.js';
+      import { chatModule } from './js/chat.js';
+      import { faqModule } from './js/faq.js';
+      import { filesModule } from './js/files.js';
+      import { adminModule } from './js/admin.js';
+      import { analyticsModule } from './js/analytics.js';
+      import { notificationModule } from './js/notifications.js';
+      import './js/app.js';
+    </script>
+  </body>
+</html>
