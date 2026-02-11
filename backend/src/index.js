@@ -21,448 +21,8 @@ const io = new Server(httpServer, {
 
 const PORT = process.env.PORT || 4100;
 
-// In-memory storage (can be upgraded to database later)
-let faqs = [
-  // General Questions
-  {
-    id: 1,
-    question: "What are the college timings?",
-    answer: "College runs from 9:00 AM to 5:00 PM, Monday to Friday. Weekend classes may vary by department.",
-    category: "General",
-    askedCount: 45,
-    helpfulCount: 38,
-  },
-  {
-    id: 2,
-    question: "What is the college address and contact information?",
-    answer: "You can find the complete college address, phone number, and email on the official college website. For urgent queries, contact the main reception at the college entrance.",
-    category: "General",
-    askedCount: 25,
-    helpfulCount: 22,
-  },
-  {
-    id: 3,
-    question: "How do I get to the college?",
-    answer: "The college is accessible by public transport. Bus routes and metro stations are listed on the college website. Parking facilities are available for students with vehicles.",
-    category: "General",
-    askedCount: 18,
-    helpfulCount: 16,
-  },
-  {
-    id: 4,
-    question: "What facilities are available in the college?",
-    answer: "The college provides library, computer labs, sports facilities, cafeteria, medical room, auditorium, and Wi-Fi connectivity throughout the campus.",
-    category: "General",
-    askedCount: 30,
-    helpfulCount: 28,
-  },
-  {
-    id: 5,
-    question: "How can I contact my professors?",
-    answer: "You can contact professors during their office hours (posted on department notice boards) or via email. Email addresses are available on the college website or department portal.",
-    category: "General",
-    askedCount: 42,
-    helpfulCount: 38,
-  },
-  
-  // Administration
-  {
-    id: 6,
-    question: "How can I get my ID card?",
-    answer: "Visit the admin office with your admission receipt and a passport photo. ID cards are usually issued within 2-3 working days after submission of documents.",
-    category: "Administration",
-    askedCount: 32,
-    helpfulCount: 28,
-  },
-  {
-    id: 7,
-    question: "How do I apply for a duplicate ID card?",
-    answer: "Submit an application form at the admin office with a police complaint copy (if lost) or damaged card. A fee may be applicable for duplicate ID cards.",
-    category: "Administration",
-    askedCount: 15,
-    helpfulCount: 14,
-  },
-  {
-    id: 8,
-    question: "What documents do I need for admission?",
-    answer: "Required documents include: 10th and 12th mark sheets, transfer certificate, character certificate, caste certificate (if applicable), passport photos, and admission form. Check the admission brochure for complete list.",
-    category: "Administration",
-    askedCount: 55,
-    helpfulCount: 50,
-  },
-  {
-    id: 9,
-    question: "How can I get a bonafide certificate?",
-    answer: "Apply at the admin office with your student ID. Bonafide certificates are usually issued within 2-3 working days. Some cases may require department approval.",
-    category: "Administration",
-    askedCount: 28,
-    helpfulCount: 25,
-  },
-  {
-    id: 10,
-    question: "Where can I pay my fees?",
-    answer: "Fees can be paid online through the college portal or at the accounts office during working hours. Payment receipts are issued immediately after payment.",
-    category: "Administration",
-    askedCount: 40,
-    helpfulCount: 36,
-  },
-  {
-    id: 11,
-    question: "How do I apply for a leave of absence?",
-    answer: "Submit a leave application form to your class coordinator or department head. For extended leaves, approval from the principal may be required. Medical leaves require a doctor's certificate.",
-    category: "Administration",
-    askedCount: 22,
-    helpfulCount: 20,
-  },
-  {
-    id: 12,
-    question: "What is the procedure for course registration?",
-    answer: "Course registration is done online through the student portal during the registration period. Check the academic calendar for registration dates. Contact your academic advisor for guidance.",
-    category: "Administration",
-    askedCount: 35,
-    helpfulCount: 32,
-  },
-  
-  // Exams
-  {
-    id: 13,
-    question: "Where can I find exam schedules?",
-    answer: "Exam schedules are uploaded on the college website and notice board 2 weeks before exams. You can also check the student portal for your personal exam timetable.",
-    category: "Exams",
-    askedCount: 67,
-    helpfulCount: 62,
-  },
-  {
-    id: 14,
-    question: "What is the exam pattern and marking scheme?",
-    answer: "Exams typically include internal assessments (40%) and end-semester exams (60%). Internal marks include assignments, quizzes, and attendance. Check your course syllabus for detailed breakdown.",
-    category: "Exams",
-    askedCount: 38,
-    helpfulCount: 35,
-  },
-  {
-    id: 15,
-    question: "How do I apply for exam revaluation?",
-    answer: "Submit a revaluation application form at the examination cell within 7 days of result declaration. A revaluation fee is applicable. Results are usually declared within 15-20 days.",
-    category: "Exams",
-    askedCount: 20,
-    helpfulCount: 18,
-  },
-  {
-    id: 16,
-    question: "What should I do if I miss an exam?",
-    answer: "Contact the examination cell immediately with a valid reason (medical emergency, etc.) and supporting documents. You may be allowed to appear for a supplementary exam if approved.",
-    category: "Exams",
-    askedCount: 15,
-    helpfulCount: 14,
-  },
-  {
-    id: 17,
-    question: "Where can I get my exam hall ticket?",
-    answer: "Hall tickets are available for download from the student portal 1 week before exams. You can also collect a printed copy from the examination cell if needed.",
-    category: "Exams",
-    askedCount: 25,
-    helpfulCount: 23,
-  },
-  {
-    id: 18,
-    question: "What items are allowed in the examination hall?",
-    answer: "Only hall ticket, student ID, pens, pencils, and calculators (if permitted) are allowed. Mobile phones, smartwatches, and electronic devices are strictly prohibited.",
-    category: "Exams",
-    askedCount: 30,
-    helpfulCount: 28,
-  },
-  {
-    id: 19,
-    question: "When are exam results declared?",
-    answer: "Results are usually declared within 3-4 weeks after the last exam. Check the college website or student portal for result announcements and updates.",
-    category: "Exams",
-    askedCount: 45,
-    helpfulCount: 42,
-  },
-  
-  // Library
-  {
-    id: 20,
-    question: "What is the library timing?",
-    answer: "Library is open from 8:00 AM to 8:00 PM on weekdays, and 9:00 AM to 5:00 PM on weekends. Reading room facilities are available during these hours.",
-    category: "Library",
-    askedCount: 28,
-    helpfulCount: 25,
-  },
-  {
-    id: 21,
-    question: "How many books can I borrow from the library?",
-    answer: "Students can borrow up to 3 books at a time for a period of 14 days. Books can be renewed once if not reserved by another student.",
-    category: "Library",
-    askedCount: 22,
-    helpfulCount: 20,
-  },
-  {
-    id: 22,
-    question: "What is the fine for late return of books?",
-    answer: "Late return fine is ₹5 per day per book. Maximum fine may be capped at the book's cost. Clear all dues before borrowing new books.",
-    category: "Library",
-    askedCount: 18,
-    helpfulCount: 16,
-  },
-  {
-    id: 23,
-    question: "How do I access e-books and online journals?",
-    answer: "E-books and online journals are accessible through the library portal using your student credentials. Contact the librarian for login details and access instructions.",
-    category: "Library",
-    askedCount: 25,
-    helpfulCount: 23,
-  },
-  {
-    id: 24,
-    question: "Can I reserve a book that is currently issued?",
-    answer: "Yes, you can reserve books through the library management system. You will be notified when the book becomes available. Reserved books are held for 3 days.",
-    category: "Library",
-    askedCount: 12,
-    helpfulCount: 11,
-  },
-  {
-    id: 25,
-    question: "Does the library have study rooms or group discussion areas?",
-    answer: "Yes, the library has designated study rooms and group discussion areas. These can be booked in advance through the library counter or online portal.",
-    category: "Library",
-    askedCount: 20,
-    helpfulCount: 18,
-  },
-  
-  // Academics
-  {
-    id: 26,
-    question: "Where can I find my course syllabus?",
-    answer: "Course syllabus is available on the college website under the academics section, in the student portal, or from your department office. You can also request it from your course instructor.",
-    category: "Academics",
-    askedCount: 35,
-    helpfulCount: 32,
-  },
-  {
-    id: 27,
-    question: "How do I change my course or specialization?",
-    answer: "Submit an application to your department head and academic advisor. Course changes are subject to availability, eligibility criteria, and approval from the academic committee.",
-    category: "Academics",
-    askedCount: 15,
-    helpfulCount: 14,
-  },
-  {
-    id: 28,
-    question: "What is the attendance requirement?",
-    answer: "Minimum 75% attendance is required to be eligible for exams. Students with less than 75% may need to apply for condonation with valid reasons and supporting documents.",
-    category: "Academics",
-    askedCount: 50,
-    helpfulCount: 45,
-  },
-  {
-    id: 29,
-    question: "How can I check my attendance?",
-    answer: "Attendance is updated regularly on the student portal. You can also check with your class coordinator or department office for attendance records.",
-    category: "Academics",
-    askedCount: 40,
-    helpfulCount: 36,
-  },
-  {
-    id: 30,
-    question: "Where can I get assignment guidelines?",
-    answer: "Assignment guidelines are provided by course instructors at the beginning of the semester. They are also available on the course portal or can be obtained from your department.",
-    category: "Academics",
-    askedCount: 28,
-    helpfulCount: 25,
-  },
-  {
-    id: 31,
-    question: "What is the deadline for submitting assignments?",
-    answer: "Assignment deadlines are announced by course instructors. Late submissions may result in grade reduction. Check your course schedule or contact your instructor for specific dates.",
-    category: "Academics",
-    askedCount: 32,
-    helpfulCount: 29,
-  },
-  {
-    id: 32,
-    question: "How do I apply for a scholarship?",
-    answer: "Scholarship applications are available at the accounts office or student welfare office. Submit required documents before the deadline. Merit-based and need-based scholarships are available.",
-    category: "Academics",
-    askedCount: 25,
-    helpfulCount: 23,
-  },
-  
-  // Hostel & Accommodation
-  {
-    id: 33,
-    question: "How do I apply for hostel accommodation?",
-    answer: "Hostel applications are available at the hostel office. Submit the application form with required documents during the admission period. Allocation is based on availability and distance from college.",
-    category: "Hostel",
-    askedCount: 20,
-    helpfulCount: 18,
-  },
-  {
-    id: 34,
-    question: "What are the hostel fees and facilities?",
-    answer: "Hostel fees vary by room type (single, double, triple sharing). Facilities include mess, Wi-Fi, laundry, common room, and 24/7 security. Contact the hostel office for current fee structure.",
-    category: "Hostel",
-    askedCount: 18,
-    helpfulCount: 16,
-  },
-  {
-    id: 35,
-    question: "What are the hostel rules and regulations?",
-    answer: "Hostel rules include curfew timings, visitor policies, mess timings, and code of conduct. Detailed rules are provided at the time of hostel allocation and are available at the hostel office.",
-    category: "Hostel",
-    askedCount: 15,
-    helpfulCount: 14,
-  },
-  
-  // Transportation
-  {
-    id: 36,
-    question: "Does the college provide bus transportation?",
-    answer: "Yes, the college operates buses on various routes. Bus passes can be obtained from the transport office. Route details and timings are available on the college website.",
-    category: "Transportation",
-    askedCount: 22,
-    helpfulCount: 20,
-  },
-  {
-    id: 37,
-    question: "How do I get a bus pass?",
-    answer: "Apply for a bus pass at the transport office with your student ID and passport photo. Bus passes are valid for one semester and can be renewed before expiry.",
-    category: "Transportation",
-    askedCount: 18,
-    helpfulCount: 16,
-  },
-  
-  // Sports & Activities
-  {
-    id: 38,
-    question: "What sports facilities are available?",
-    answer: "The college has facilities for cricket, football, basketball, volleyball, badminton, table tennis, and a gymnasium. Sports equipment can be borrowed from the sports office.",
-    category: "Sports",
-    askedCount: 20,
-    helpfulCount: 18,
-  },
-  {
-    id: 39,
-    question: "How can I join a club or society?",
-    answer: "Club registrations are open at the beginning of each semester. Visit the student activities office or check the college website for club listings and registration details.",
-    category: "Activities",
-    askedCount: 25,
-    helpfulCount: 23,
-  },
-  {
-    id: 40,
-    question: "When are cultural events and festivals organized?",
-    answer: "Cultural events and festivals are organized throughout the year. Major events include annual day, technical fest, and cultural fest. Check the events calendar on the college website.",
-    category: "Activities",
-    askedCount: 18,
-    helpfulCount: 16,
-  },
-  
-  // Placement & Career
-  {
-    id: 41,
-    question: "How do I register for placements?",
-    answer: "Register through the placement portal using your student credentials. Complete your profile, upload resume, and attend placement training sessions. Contact the placement cell for assistance.",
-    category: "Placement",
-    askedCount: 45,
-    helpfulCount: 42,
-  },
-  {
-    id: 42,
-    question: "What companies visit for campus recruitment?",
-    answer: "Various companies from IT, finance, manufacturing, and other sectors visit for recruitment. The placement cell maintains a list of visiting companies. Check the placement portal for updates.",
-    category: "Placement",
-    askedCount: 38,
-    helpfulCount: 35,
-  },
-  {
-    id: 43,
-    question: "How can I get internship opportunities?",
-    answer: "Internship opportunities are posted on the placement portal and college notice boards. You can also approach the placement cell for guidance. Some departments also provide internship assistance.",
-    category: "Placement",
-    askedCount: 30,
-    helpfulCount: 28,
-  },
-  
-  // IT & Technical
-  {
-    id: 44,
-    question: "How do I get Wi-Fi access on campus?",
-    answer: "Wi-Fi credentials are provided at the time of admission. Contact the IT department if you need new credentials or face connectivity issues. Wi-Fi is available throughout the campus.",
-    category: "IT",
-    askedCount: 35,
-    helpfulCount: 32,
-  },
-  {
-    id: 45,
-    question: "What if I forget my student portal password?",
-    answer: "Use the 'Forgot Password' option on the student portal login page. You can reset your password using your registered email or contact the IT department for assistance.",
-    category: "IT",
-    askedCount: 28,
-    helpfulCount: 25,
-  },
-  {
-    id: 46,
-    question: "How do I access computer labs?",
-    answer: "Computer labs are accessible during lab hours as per your timetable. For additional access, contact your department or lab in-charge. Lab rules and usage guidelines are posted in each lab.",
-    category: "IT",
-    askedCount: 20,
-    helpfulCount: 18,
-  },
-  
-  // Medical & Health
-  {
-    id: 47,
-    question: "Is there a medical facility on campus?",
-    answer: "Yes, the college has a medical room with a nurse available during college hours. For emergencies, contact the medical room or security office. First aid facilities are available.",
-    category: "Medical",
-    askedCount: 15,
-    helpfulCount: 14,
-  },
-  {
-    id: 48,
-    question: "How do I get a medical certificate?",
-    answer: "Visit the college medical room or get a certificate from a registered medical practitioner. Medical certificates are required for leave applications and exam exemptions.",
-    category: "Medical",
-    askedCount: 18,
-    helpfulCount: 16,
-  },
-  
-  // Miscellaneous
-  {
-    id: 49,
-    question: "Where is the cafeteria located?",
-    answer: "The cafeteria is located on the ground floor near the main building. It serves breakfast, lunch, snacks, and beverages. Operating hours are 8:00 AM to 6:00 PM.",
-    category: "General",
-    askedCount: 25,
-    helpfulCount: 23,
-  },
-  {
-    id: 50,
-    question: "How can I file a complaint or suggestion?",
-    answer: "Complaints and suggestions can be submitted through the student portal, suggestion box at the admin office, or via email to the student council. Anonymous complaints are also accepted.",
-    category: "General",
-    askedCount: 20,
-    helpfulCount: 18,
-  },
-  {
-    id: 51,
-    question: "What is the dress code?",
-    answer: "The college follows a formal dress code. Students are expected to wear neat and presentable attire. Specific dress code guidelines are available in the student handbook.",
-    category: "General",
-    askedCount: 15,
-    helpfulCount: 14,
-  },
-  {
-    id: 52,
-    question: "How do I get a transcript or mark sheet?",
-    answer: "Apply for transcripts at the examination cell or admin office. Transcripts are usually issued within 7-10 working days. A fee is applicable for transcript requests.",
-    category: "Administration",
-    askedCount: 22,
-    helpfulCount: 20,
-  },
-];
+// FAQs will be initialized from file or defaults
+let faqs = [];
 
 let files = []; // Start with empty array - files will be added through uploads only
 
@@ -509,6 +69,509 @@ const uploadsDir = path.join(__dirname, "../uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
+
+// Data persistence directory setup
+const dataDir = path.join(__dirname, "../data");
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+const faqsFilePath = path.join(dataDir, "faqs.json");
+
+// Persistent storage functions for FAQs
+function saveFaqsToFile() {
+  try {
+    fs.writeFileSync(faqsFilePath, JSON.stringify(faqs, null, 2), 'utf8');
+    console.log(`✅ FAQs saved to ${faqsFilePath} (${faqs.length} FAQs)`);
+  } catch (error) {
+    console.error('❌ Error saving FAQs to file:', error);
+  }
+}
+
+function loadFaqsFromFile() {
+  try {
+    if (fs.existsSync(faqsFilePath)) {
+      const fileData = fs.readFileSync(faqsFilePath, 'utf8');
+      const savedFaqs = JSON.parse(fileData);
+      if (Array.isArray(savedFaqs) && savedFaqs.length > 0) {
+        console.log(`✅ Loaded ${savedFaqs.length} FAQs from ${faqsFilePath}`);
+        return savedFaqs;
+      }
+    }
+  } catch (error) {
+    console.error('❌ Error loading FAQs from file:', error);
+  }
+  return null;
+}
+
+// Merge default FAQs with user-added FAQs from file
+function initializeFaqs() {
+  const defaultFaqs = [
+    // General Questions
+    {
+      id: 1,
+      question: "What are the college timings?",
+      answer: "College runs from 9:00 AM to 5:00 PM, Monday to Friday. Weekend classes may vary by department.",
+      category: "General",
+      askedCount: 45,
+      helpfulCount: 38,
+    },
+    {
+      id: 2,
+      question: "What is the college address and contact information?",
+      answer: "You can find the complete college address, phone number, and email on the official college website. For urgent queries, contact the main reception at the college entrance.",
+      category: "General",
+      askedCount: 25,
+      helpfulCount: 22,
+    },
+    {
+      id: 3,
+      question: "How do I get to the college?",
+      answer: "The college is accessible by public transport. Bus routes and metro stations are listed on the college website. Parking facilities are available for students with vehicles.",
+      category: "General",
+      askedCount: 18,
+      helpfulCount: 16,
+    },
+    {
+      id: 4,
+      question: "What facilities are available in the college?",
+      answer: "The college provides library, computer labs, sports facilities, cafeteria, medical room, auditorium, and Wi-Fi connectivity throughout the campus.",
+      category: "General",
+      askedCount: 30,
+      helpfulCount: 28,
+    },
+    {
+      id: 5,
+      question: "How can I contact my professors?",
+      answer: "You can contact professors during their office hours (posted on department notice boards) or via email. Email addresses are available on the college website or department portal.",
+      category: "General",
+      askedCount: 42,
+      helpfulCount: 38,
+    },
+    // Administration
+    {
+      id: 6,
+      question: "How can I get my ID card?",
+      answer: "Visit the admin office with your admission receipt and a passport photo. ID cards are usually issued within 2-3 working days after submission of documents.",
+      category: "Administration",
+      askedCount: 32,
+      helpfulCount: 28,
+    },
+    {
+      id: 7,
+      question: "How do I apply for a duplicate ID card?",
+      answer: "Submit an application form at the admin office with a police complaint copy (if lost) or damaged card. A fee may be applicable for duplicate ID cards.",
+      category: "Administration",
+      askedCount: 15,
+      helpfulCount: 14,
+    },
+    {
+      id: 8,
+      question: "What documents do I need for admission?",
+      answer: "Required documents include: 10th and 12th mark sheets, transfer certificate, character certificate, caste certificate (if applicable), passport photos, and admission form. Check the admission brochure for complete list.",
+      category: "Administration",
+      askedCount: 55,
+      helpfulCount: 50,
+    },
+    {
+      id: 9,
+      question: "How can I get a bonafide certificate?",
+      answer: "Apply at the admin office with your student ID. Bonafide certificates are usually issued within 2-3 working days. Some cases may require department approval.",
+      category: "Administration",
+      askedCount: 28,
+      helpfulCount: 25,
+    },
+    {
+      id: 10,
+      question: "Where can I pay my fees?",
+      answer: "Fees can be paid online through the college portal or at the accounts office during working hours. Payment receipts are issued immediately after payment.",
+      category: "Administration",
+      askedCount: 40,
+      helpfulCount: 36,
+    },
+    {
+      id: 11,
+      question: "How do I apply for a leave of absence?",
+      answer: "Submit a leave application form to your class coordinator or department head. For extended leaves, approval from the principal may be required. Medical leaves require a doctor's certificate.",
+      category: "Administration",
+      askedCount: 22,
+      helpfulCount: 20,
+    },
+    {
+      id: 12,
+      question: "What is the procedure for course registration?",
+      answer: "Course registration is done online through the student portal during the registration period. Check the academic calendar for registration dates. Contact your academic advisor for guidance.",
+      category: "Administration",
+      askedCount: 35,
+      helpfulCount: 32,
+    },
+    // Exams
+    {
+      id: 13,
+      question: "Where can I find exam schedules?",
+      answer: "Exam schedules are uploaded on the college website and notice board 2 weeks before exams. You can also check the student portal for your personal exam timetable.",
+      category: "Exams",
+      askedCount: 67,
+      helpfulCount: 62,
+    },
+    {
+      id: 14,
+      question: "What is the exam pattern and marking scheme?",
+      answer: "Exams typically include internal assessments (40%) and end-semester exams (60%). Internal marks include assignments, quizzes, and attendance. Check your course syllabus for detailed breakdown.",
+      category: "Exams",
+      askedCount: 38,
+      helpfulCount: 35,
+    },
+    {
+      id: 15,
+      question: "How do I apply for exam revaluation?",
+      answer: "Submit a revaluation application form at the examination cell within 7 days of result declaration. A revaluation fee is applicable. Results are usually declared within 15-20 days.",
+      category: "Exams",
+      askedCount: 20,
+      helpfulCount: 18,
+    },
+    {
+      id: 16,
+      question: "What should I do if I miss an exam?",
+      answer: "Contact the examination cell immediately with a valid reason (medical emergency, etc.) and supporting documents. You may be allowed to appear for a supplementary exam if approved.",
+      category: "Exams",
+      askedCount: 15,
+      helpfulCount: 14,
+    },
+    {
+      id: 17,
+      question: "Where can I get my exam hall ticket?",
+      answer: "Hall tickets are available for download from the student portal 1 week before exams. You can also collect a printed copy from the examination cell if needed.",
+      category: "Exams",
+      askedCount: 25,
+      helpfulCount: 23,
+    },
+    {
+      id: 18,
+      question: "What items are allowed in the examination hall?",
+      answer: "Only hall ticket, student ID, pens, pencils, and calculators (if permitted) are allowed. Mobile phones, smartwatches, and electronic devices are strictly prohibited.",
+      category: "Exams",
+      askedCount: 30,
+      helpfulCount: 28,
+    },
+    {
+      id: 19,
+      question: "When are exam results declared?",
+      answer: "Results are usually declared within 3-4 weeks after the last exam. Check the college website or student portal for result announcements and updates.",
+      category: "Exams",
+      askedCount: 45,
+      helpfulCount: 42,
+    },
+    // Library
+    {
+      id: 20,
+      question: "What is the library timing?",
+      answer: "Library is open from 8:00 AM to 8:00 PM on weekdays, and 9:00 AM to 5:00 PM on weekends. Reading room facilities are available during these hours.",
+      category: "Library",
+      askedCount: 28,
+      helpfulCount: 25,
+    },
+    {
+      id: 21,
+      question: "How many books can I borrow from the library?",
+      answer: "Students can borrow up to 3 books at a time for a period of 14 days. Books can be renewed once if not reserved by another student.",
+      category: "Library",
+      askedCount: 22,
+      helpfulCount: 20,
+    },
+    {
+      id: 22,
+      question: "What is the fine for late return of books?",
+      answer: "Late return fine is ₹5 per day per book. Maximum fine may be capped at the book's cost. Clear all dues before borrowing new books.",
+      category: "Library",
+      askedCount: 18,
+      helpfulCount: 16,
+    },
+    {
+      id: 23,
+      question: "How do I access e-books and online journals?",
+      answer: "E-books and online journals are accessible through the library portal using your student credentials. Contact the librarian for login details and access instructions.",
+      category: "Library",
+      askedCount: 25,
+      helpfulCount: 23,
+    },
+    {
+      id: 24,
+      question: "Can I reserve a book that is currently issued?",
+      answer: "Yes, you can reserve books through the library management system. You will be notified when the book becomes available. Reserved books are held for 3 days.",
+      category: "Library",
+      askedCount: 12,
+      helpfulCount: 11,
+    },
+    {
+      id: 25,
+      question: "Does the library have study rooms or group discussion areas?",
+      answer: "Yes, the library has designated study rooms and group discussion areas. These can be booked in advance through the library counter or online portal.",
+      category: "Library",
+      askedCount: 20,
+      helpfulCount: 18,
+    },
+    // Academics
+    {
+      id: 26,
+      question: "Where can I find my course syllabus?",
+      answer: "Course syllabus is available on the college website under the academics section, in the student portal, or from your department office. You can also request it from your course instructor.",
+      category: "Academics",
+      askedCount: 35,
+      helpfulCount: 32,
+    },
+    {
+      id: 27,
+      question: "How do I change my course or specialization?",
+      answer: "Submit an application to your department head and academic advisor. Course changes are subject to availability, eligibility criteria, and approval from the academic committee.",
+      category: "Academics",
+      askedCount: 15,
+      helpfulCount: 14,
+    },
+    {
+      id: 28,
+      question: "What is the attendance requirement?",
+      answer: "Minimum 75% attendance is required to be eligible for exams. Students with less than 75% may need to apply for condonation with valid reasons and supporting documents.",
+      category: "Academics",
+      askedCount: 50,
+      helpfulCount: 45,
+    },
+    {
+      id: 29,
+      question: "How can I check my attendance?",
+      answer: "Attendance is updated regularly on the student portal. You can also check with your class coordinator or department office for attendance records.",
+      category: "Academics",
+      askedCount: 40,
+      helpfulCount: 36,
+    },
+    {
+      id: 30,
+      question: "Where can I get assignment guidelines?",
+      answer: "Assignment guidelines are provided by course instructors at the beginning of the semester. They are also available on the course portal or can be obtained from your department.",
+      category: "Academics",
+      askedCount: 28,
+      helpfulCount: 25,
+    },
+    {
+      id: 31,
+      question: "What is the deadline for submitting assignments?",
+      answer: "Assignment deadlines are announced by course instructors. Late submissions may result in grade reduction. Check your course schedule or contact your instructor for specific dates.",
+      category: "Academics",
+      askedCount: 32,
+      helpfulCount: 29,
+    },
+    {
+      id: 32,
+      question: "How do I apply for a scholarship?",
+      answer: "Scholarship applications are available at the accounts office or student welfare office. Submit required documents before the deadline. Merit-based and need-based scholarships are available.",
+      category: "Academics",
+      askedCount: 25,
+      helpfulCount: 23,
+    },
+    // Hostel & Accommodation
+    {
+      id: 33,
+      question: "How do I apply for hostel accommodation?",
+      answer: "Hostel applications are available at the hostel office. Submit the application form with required documents during the admission period. Allocation is based on availability and distance from college.",
+      category: "Hostel",
+      askedCount: 20,
+      helpfulCount: 18,
+    },
+    {
+      id: 34,
+      question: "What are the hostel fees and facilities?",
+      answer: "Hostel fees vary by room type (single, double, triple sharing). Facilities include mess, Wi-Fi, laundry, common room, and 24/7 security. Contact the hostel office for current fee structure.",
+      category: "Hostel",
+      askedCount: 18,
+      helpfulCount: 16,
+    },
+    {
+      id: 35,
+      question: "What are the hostel rules and regulations?",
+      answer: "Hostel rules include curfew timings, visitor policies, mess timings, and code of conduct. Detailed rules are provided at the time of hostel allocation and are available at the hostel office.",
+      category: "Hostel",
+      askedCount: 15,
+      helpfulCount: 14,
+    },
+    // Transportation
+    {
+      id: 36,
+      question: "Does the college provide bus transportation?",
+      answer: "Yes, the college operates buses on various routes. Bus passes can be obtained from the transport office. Route details and timings are available on the college website.",
+      category: "Transportation",
+      askedCount: 22,
+      helpfulCount: 20,
+    },
+    {
+      id: 37,
+      question: "How do I get a bus pass?",
+      answer: "Apply for a bus pass at the transport office with your student ID and passport photo. Bus passes are valid for one semester and can be renewed before expiry.",
+      category: "Transportation",
+      askedCount: 18,
+      helpfulCount: 16,
+    },
+    // Sports & Activities
+    {
+      id: 38,
+      question: "What sports facilities are available?",
+      answer: "The college has facilities for cricket, football, basketball, volleyball, badminton, table tennis, and a gymnasium. Sports equipment can be borrowed from the sports office.",
+      category: "Sports",
+      askedCount: 20,
+      helpfulCount: 18,
+    },
+    {
+      id: 39,
+      question: "How can I join a club or society?",
+      answer: "Club registrations are open at the beginning of each semester. Visit the student activities office or check the college website for club listings and registration details.",
+      category: "Activities",
+      askedCount: 25,
+      helpfulCount: 23,
+    },
+    {
+      id: 40,
+      question: "When are cultural events and festivals organized?",
+      answer: "Cultural events and festivals are organized throughout the year. Major events include annual day, technical fest, and cultural fest. Check the events calendar on the college website.",
+      category: "Activities",
+      askedCount: 18,
+      helpfulCount: 16,
+    },
+    // Placement & Career
+    {
+      id: 41,
+      question: "How do I register for placements?",
+      answer: "Register through the placement portal using your student credentials. Complete your profile, upload resume, and attend placement training sessions. Contact the placement cell for assistance.",
+      category: "Placement",
+      askedCount: 45,
+      helpfulCount: 42,
+    },
+    {
+      id: 42,
+      question: "What companies visit for campus recruitment?",
+      answer: "Various companies from IT, finance, manufacturing, and other sectors visit for recruitment. The placement cell maintains a list of visiting companies. Check the placement portal for updates.",
+      category: "Placement",
+      askedCount: 38,
+      helpfulCount: 35,
+    },
+    {
+      id: 43,
+      question: "How can I get internship opportunities?",
+      answer: "Internship opportunities are posted on the placement portal and college notice boards. You can also approach the placement cell for guidance. Some departments also provide internship assistance.",
+      category: "Placement",
+      askedCount: 30,
+      helpfulCount: 28,
+    },
+    // IT & Technical
+    {
+      id: 44,
+      question: "How do I get Wi-Fi access on campus?",
+      answer: "Wi-Fi credentials are provided at the time of admission. Contact the IT department if you need new credentials or face connectivity issues. Wi-Fi is available throughout the campus.",
+      category: "IT",
+      askedCount: 35,
+      helpfulCount: 32,
+    },
+    {
+      id: 45,
+      question: "What if I forget my student portal password?",
+      answer: "Use the 'Forgot Password' option on the student portal login page. You can reset your password using your registered email or contact the IT department for assistance.",
+      category: "IT",
+      askedCount: 28,
+      helpfulCount: 25,
+    },
+    {
+      id: 46,
+      question: "How do I access computer labs?",
+      answer: "Computer labs are accessible during lab hours as per your timetable. For additional access, contact your department or lab in-charge. Lab rules and usage guidelines are posted in each lab.",
+      category: "IT",
+      askedCount: 20,
+      helpfulCount: 18,
+    },
+    // Medical & Health
+    {
+      id: 47,
+      question: "Is there a medical facility on campus?",
+      answer: "Yes, the college has a medical room with a nurse available during college hours. For emergencies, contact the medical room or security office. First aid facilities are available.",
+      category: "Medical",
+      askedCount: 15,
+      helpfulCount: 14,
+    },
+    {
+      id: 48,
+      question: "How do I get a medical certificate?",
+      answer: "Visit the college medical room or get a certificate from a registered medical practitioner. Medical certificates are required for leave applications and exam exemptions.",
+      category: "Medical",
+      askedCount: 18,
+      helpfulCount: 16,
+    },
+    // Miscellaneous
+    {
+      id: 49,
+      question: "Where is the cafeteria located?",
+      answer: "The cafeteria is located on the ground floor near the main building. It serves breakfast, lunch, snacks, and beverages. Operating hours are 8:00 AM to 6:00 PM.",
+      category: "General",
+      askedCount: 25,
+      helpfulCount: 23,
+    },
+    {
+      id: 50,
+      question: "How can I file a complaint or suggestion?",
+      answer: "Complaints and suggestions can be submitted through the student portal, suggestion box at the admin office, or via email to the student council. Anonymous complaints are also accepted.",
+      category: "General",
+      askedCount: 20,
+      helpfulCount: 18,
+    },
+    {
+      id: 51,
+      question: "What is the dress code?",
+      answer: "The college follows a formal dress code. Students are expected to wear neat and presentable attire. Specific dress code guidelines are available in the student handbook.",
+      category: "General",
+      askedCount: 15,
+      helpfulCount: 14,
+    },
+    {
+      id: 52,
+      question: "How do I get a transcript or mark sheet?",
+      answer: "Apply for transcripts at the examination cell or admin office. Transcripts are usually issued within 7-10 working days. A fee is applicable for transcript requests.",
+      category: "Administration",
+      askedCount: 22,
+      helpfulCount: 20,
+    },
+  ];
+
+  const savedFaqs = loadFaqsFromFile();
+  
+  if (savedFaqs) {
+    // Merge: Keep default FAQs (IDs 1-52) and add user-added FAQs (IDs > 52 or not in defaults)
+    const defaultIds = new Set(defaultFaqs.map(f => f.id));
+    const userAddedFaqs = savedFaqs.filter(f => !defaultIds.has(f.id));
+    
+    // Update default FAQs with saved stats if they exist
+    const savedFaqsMap = new Map(savedFaqs.map(f => [f.id, f]));
+    const mergedDefaults = defaultFaqs.map(defaultFaq => {
+      const saved = savedFaqsMap.get(defaultFaq.id);
+      if (saved) {
+        // Preserve stats from saved version
+        return {
+          ...defaultFaq,
+          askedCount: saved.askedCount || defaultFaq.askedCount,
+          helpfulCount: saved.helpfulCount || defaultFaq.helpfulCount,
+        };
+      }
+      return defaultFaq;
+    });
+    
+    // Combine defaults with user-added FAQs
+    faqs = [...mergedDefaults, ...userAddedFaqs];
+    console.log(`✅ Merged ${mergedDefaults.length} default FAQs with ${userAddedFaqs.length} user-added FAQs`);
+  } else {
+    // First time: use defaults
+    faqs = [...defaultFaqs];
+    console.log(`✅ Using ${faqs.length} default FAQs (first run)`);
+    saveFaqsToFile(); // Save defaults to file
+  }
+}
+
+// Initialize FAQs on startup
+initializeFaqs();
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -572,7 +635,12 @@ function findAnswer(userQuestion) {
 
   // Return best match if score is good enough
   if (maxScore >= 3) {
-    faqs.find((f) => f.id === bestMatch.id).askedCount++;
+    const matchedFaq = faqs.find((f) => f.id === bestMatch.id);
+    if (matchedFaq) {
+      matchedFaq.askedCount++;
+      // Save periodically (every 10th query) to avoid too many file writes
+      // But always save on important changes (add/delete) which are handled separately
+    }
     return bestMatch.answer;
   }
 
@@ -649,6 +717,7 @@ app.post("/api/faqs", (req, res) => {
     helpfulCount: 0, // Track helpfulness
   };
   faqs.push(newFaq);
+  saveFaqsToFile(); // Save to persistent storage
   notifications.push({
     id: notifications.length + 1,
     message: `New FAQ added: ${question}`,
@@ -664,6 +733,7 @@ app.post("/api/faqs/:id/helpful", (req, res) => {
   const faq = faqs.find((f) => f.id === parseInt(req.params.id));
   if (faq) {
     faq.helpfulCount = (faq.helpfulCount || 0) + 1;
+    saveFaqsToFile(); // Save to persistent storage
     res.json({ success: true, helpfulCount: faq.helpfulCount });
   } else {
     res.status(404).json({ error: "FAQ not found" });
@@ -685,6 +755,7 @@ app.delete("/api/faqs/:id", (req, res) => {
   const deletedFaq = faqs[faqIndex];
   // Safely remove FAQ from array - only delete if explicitly requested
   faqs.splice(faqIndex, 1);
+  saveFaqsToFile(); // Save to persistent storage
   
   // Safety check: verify deletion
   const stillExists = faqs.find(f => f.id === faqId);
@@ -818,6 +889,61 @@ app.get("/api/analytics", (req, res) => {
 // Notifications
 app.get("/api/notifications", (req, res) => {
   res.json({ notifications: notifications.slice(-10).reverse() });
+});
+
+// Chat HTTP API endpoints (for frontend HTTP requests)
+app.post("/api/chat", (req, res) => {
+  const { message, user, isAuthenticated } = req.body;
+  
+  // Check if user is authenticated
+  if (!isAuthenticated || !user) {
+    const loginMessages = [
+      "🔐 Please login first to use the chat assistant! Click the login button in the top-right corner.",
+      "⚠️ You need to be logged in to ask questions. Please login to continue.",
+      "🚫 Access denied! Please login first to chat with the assistant.",
+      "👤 Authentication required! Please login to ask questions.",
+      "🔒 This feature requires login. Please login to access the chat assistant."
+    ];
+    const randomMessage = loginMessages[Math.floor(Math.random() * loginMessages.length)];
+    return res.json({ 
+      type: "bot", 
+      message: randomMessage, 
+      timestamp: new Date().toISOString() 
+    });
+  }
+  
+  if (!message || !message.trim()) {
+    return res.status(400).json({ error: "Message is required" });
+  }
+  
+  const botAnswer = findAnswer(message);
+  const userMsg = { 
+    type: "user", 
+    message: message.trim(), 
+    user: user || "Student", 
+    timestamp: new Date().toISOString() 
+  };
+  const botMsg = { 
+    type: "bot", 
+    message: botAnswer, 
+    timestamp: new Date().toISOString() 
+  };
+  
+  // Add to history
+  chatHistory.push(userMsg, botMsg);
+  
+  // Limit history to prevent memory issues
+  if (chatHistory.length > 100) {
+    chatHistory.splice(0, chatHistory.length - 50);
+  }
+  
+  res.json(botMsg);
+});
+
+app.get("/api/chat/history", (req, res) => {
+  // Return recent chat history (last 50 messages)
+  const recentHistory = chatHistory.slice(-50);
+  res.json({ history: recentHistory });
 });
 
 // Chat via Socket.io

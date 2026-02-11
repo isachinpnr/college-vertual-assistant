@@ -115,11 +115,42 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message, user, isAuthenticated })
     });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Chat API error:', response.status, errorText);
+      throw new Error(`Chat API error: ${response.status} ${response.statusText}`);
+    }
+    
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      console.error('Invalid response type, got:', contentType, text.substring(0, 100));
+      throw new Error('Server returned non-JSON response');
+    }
+    
     return response.json();
   },
 
   getChatHistory: async () => {
     const response = await fetch(`${API_BASE}/api/chat/history`);
+    
+    if (!response.ok) {
+      // If history endpoint doesn't exist or fails, return empty history
+      if (response.status === 404) {
+        return { history: [] };
+      }
+      const errorText = await response.text();
+      console.error('Chat history API error:', response.status, errorText);
+      throw new Error(`Chat history API error: ${response.status} ${response.statusText}`);
+    }
+    
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      // If not JSON, return empty history instead of throwing
+      return { history: [] };
+    }
+    
     return response.json();
   }
 };
